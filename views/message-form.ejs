@@ -1,0 +1,10 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-3">Nouveau message</h1>
+<%- include('partials/errors') %>
+<form method="post" action="/messages" class="card card-body"><input type="hidden" name="_csrf" value="<%= csrf %>">
+  <label class="form-label">Destinataire *</label><select class="form-select mb-3" name="recipient_id" required><option value="">— Choisir —</option>
+  <% recipients.forEach(r => { %><option value="<%= r.value %>" <%= String(r.value) === String(v.recipient_id) ? 'selected' : '' %>><%= r.label %></option><% }) %></select>
+  <label class="form-label">Objet *</label><input class="form-control mb-3" name="objet" maxlength="150" required value="<%= v.objet %>">
+  <label class="form-label">Message *</label><textarea class="form-control mb-3" name="contenu" rows="6" maxlength="5000" required><%= v.contenu %></textarea>
+  <div><button class="btn btn-primary"><i class="bi bi-send"></i> Envoyer</button> <a class="btn btn-outline-secondary" href="/messages">Annuler</a></div></form>
+<%- include('partials/footer') %>
