@@ -1,0 +1,5 @@
+Note de projet de cloud et big data app "edugest"
+ajouter les classes(les salles/les emplois/les limites des salles)
+ajouter les parents dans les interfaces de eleves etc...
+comment l'enseingnat ajoute un devoir (ajouter les fichiers)
+

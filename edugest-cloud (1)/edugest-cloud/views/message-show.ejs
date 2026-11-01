@@ -1,0 +1,7 @@
+<%- include('partials/header') %>
+<div class="card"><div class="card-header"><strong><%= m.objet %></strong></div><div class="card-body">
+<div class="text-muted small mb-3">De <strong><%= m.expediteur %></strong> à <strong><%= m.destinataire %></strong> · <%= fmtDateTime(m.created_at) %></div>
+<p style="white-space:pre-line"><%= m.contenu %></p></div>
+<div class="card-footer"><a class="btn btn-outline-secondary" href="/messages">Retour</a>
+<% if (m.sender_id !== user.id) { %><a class="btn btn-primary" href="/messages/new?to=<%= m.sender_id %>&objet=<%= encodeURIComponent('Re: ' + m.objet.replace(/^Re: /, '')) %>"><i class="bi bi-reply"></i> Répondre</a><% } %></div></div>
+<%- include('partials/footer') %>

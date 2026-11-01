@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title><%= title %> – EduGest Cloud</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="/css/style.css" rel="stylesheet">
+</head><body>
+<% if (user) {
+  const ALL = ['admin','enseignant','parent','comptable'];
+  const items = [
+    ['/dashboard','speedometer2','Tableau de bord',ALL],
+    ['/students','people','Élèves',['admin']],
+    ['/classes','building','Classes',['admin']],
+    ['/subjects','book','Matières',['admin']],
+    ['/users','person-badge','Utilisateurs',['admin']],
+    ['/grades','journal-check','Notes',['admin','enseignant']],
+    ['/children','person-hearts','Mes enfants',['parent']],
+    ['/payments','cash-coin','Paiements',['admin','comptable']],
+    ['/payments/pending','hourglass-split','En attente',['admin','comptable']],
+    ['/homework','pencil-square','Devoirs',['admin','enseignant','parent']],
+    ['/announcements','megaphone','Annonces',ALL],
+    ['/messages','envelope','Messagerie',ALL],
+    ['/notifications','bell','Notifications',ALL]
+  ]; %>
+<div class="topbar d-lg-none"><button class="btn btn-link text-white" id="menuToggle" aria-label="Menu"><i class="bi bi-list fs-3"></i></button><strong>EduGest Cloud</strong></div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><i class="bi bi-mortarboard-fill"></i> EduGest <span>Cloud</span></div>
+    <nav>
+      <% items.filter(i => i[3].includes(user.role)).forEach(i => {
+        const active = currentPath === i[0] || (currentPath.startsWith(i[0] + '/') && !(i[0] === '/payments' && currentPath === '/payments/pending')); %>
+        <a href="<%= i[0] %>" class="<%= active ? 'active' : '' %>"><i class="bi bi-<%= i[1] %>"></i> <%= i[2] %>
+          <% if (i[0] === '/notifications' && unreadNotif) { %><span class="badge bg-info text-dark ms-auto"><%= unreadNotif %></span><% } %>
+          <% if (i[0] === '/messages' && unreadMsg) { %><span class="badge bg-info text-dark ms-auto"><%= unreadMsg %></span><% } %></a>
+      <% }) %>
+    </nav>
+    <div class="userbox">
+      <div class="small"><i class="bi bi-person-circle"></i> <%= user.prenom %> <%= user.nom %></div>
+      <div class="small opacity-75 mb-2"><%= ROLES[user.role] %></div>
+      <form method="post" action="/logout"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-outline-light w-100"><i class="bi bi-box-arrow-right"></i> Se déconnecter</button></form>
+    </div>
+  </aside>
+  <main class="content">
+<% } else { %><main class="container py-5"><% } %>
+<% if (flash) { %><div class="alert alert-<%= flash.type %> alert-dismissible fade show" role="alert"><%= flash.msg %><button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button></div><% } %>

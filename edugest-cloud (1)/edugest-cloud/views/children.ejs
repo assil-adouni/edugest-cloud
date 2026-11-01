@@ -1,0 +1,19 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-3">Mes enfants</h1>
+<% if (!kids.length) { %><div class="card card-body text-muted text-center">Aucun enfant n'est rattaché à votre compte.</div><% } %>
+<% kids.forEach(k => { %>
+<div class="card mb-4"><div class="card-header d-flex justify-content-between flex-wrap gap-2"><strong><%= k.prenom %> <%= k.nom %></strong><span><%= k.classe %> · <%= k.annee_scolaire %></span></div>
+<div class="card-body"><div class="row g-3">
+  <div class="col-lg-4"><h2 class="h6">Notes et moyennes</h2>
+    <% [1,2,3].forEach(t => { const x = k.report.trimestres[t]; %><div class="d-flex justify-content-between small border-bottom py-1"><span>Trimestre <%= t %> (<%= x.notes.length %> note<%= x.notes.length > 1 ? 's' : '' %>)</span><strong><%= x.moyenne === null ? '—' : x.moyenne + ' / 20' %></strong></div><% }) %>
+    <div class="mt-2">Moyenne générale : <strong><%= k.report.generale === null ? '—' : k.report.generale + ' / 20' %></strong></div>
+    <a class="btn btn-sm btn-outline-primary mt-2" href="/bulletin/<%= k.id %>">Voir le bulletin détaillé</a></div>
+  <div class="col-lg-4"><h2 class="h6">Paiements</h2>
+    <div class="small">Frais : <%= money(k.balance.frais) %><br>Payé : <%= money(k.balance.paye) %><br>Reste à payer : <strong><%= money(k.balance.solde) %></strong></div>
+    <ul class="list-unstyled small mt-2 mb-0"><% k.payments.forEach(p => { %><li><%= fmtDate(p.date_paiement) %> — <%= money(p.montant) %> <span class="badge <%= p.statut === 'paye' ? 'bg-success' : 'bg-warning text-dark' %>"><%= p.statut === 'paye' ? 'Payé' : 'En attente' %></span></li><% }) %></ul></div>
+  <div class="col-lg-4"><h2 class="h6">Devoirs</h2>
+    <% if (!k.homework.length) { %><div class="small text-muted">Aucun devoir.</div><% } %>
+    <ul class="list-unstyled small mb-0"><% k.homework.forEach(h => { %><li class="mb-2"><strong><%= h.titre %></strong> (<%= h.matiere %>)<br>À rendre le <%= fmtDate(h.date_limite) %></li><% }) %></ul></div>
+</div></div></div>
+<% }) %>
+<%- include('partials/footer') %>

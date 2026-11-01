@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<div class="d-flex justify-content-between align-items-center mb-3"><h1 class="h3 page-title mb-0">Bulletin — <%= s.prenom %> <%= s.nom %></h1><button class="btn btn-outline-primary d-print-none" onclick="window.print()"><i class="bi bi-printer"></i> Imprimer</button></div>
+<p class="text-muted"><%= s.classe %> · Année <%= s.annee_scolaire %> · Né(e) le <%= fmtDate(s.date_naissance) %> · Parent : <%= s.parent %></p>
+<div class="row g-3">
+<% [1,2,3].forEach(t => { const x = report.trimestres[t]; %>
+<div class="col-lg-4"><div class="card h-100"><div class="card-header d-flex justify-content-between"><span>Trimestre <%= t %></span><strong><%= x.moyenne === null ? '—' : x.moyenne + ' / 20' %></strong></div>
+<table class="table table-sm mb-0"><thead><tr><th>Matière</th><th>Coef.</th><th>Note</th></tr></thead><tbody>
+<% if (!x.notes.length) { %><tr><td colspan="3" class="text-muted text-center">Pas de notes</td></tr><% } %>
+<% x.notes.forEach(n => { %><tr><td><%= n.matiere %></td><td><%= n.coefficient %></td><td><%= n.valeur %></td></tr><% }) %></tbody></table></div></div>
+<% }) %></div>
+<div class="alert alert-primary mt-3">Moyenne générale : <strong><%= report.generale === null ? '—' : report.generale + ' / 20' %></strong>
+<div class="small mt-1">Moyenne du trimestre = Σ(note × coefficient) ÷ Σ(coefficients). Moyenne générale = moyenne des trimestres notés.</div></div>
+<%- include('partials/footer') %>

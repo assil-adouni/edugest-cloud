@@ -1,0 +1,7 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-3">Notifications</h1>
+<p class="text-muted small">Notifications internes à l'application (aucun e-mail n'est envoyé dans cette version de démonstration).</p>
+<ul class="list-group">
+<% if (!rows.length) { %><li class="list-group-item text-muted text-center py-4">Aucune notification.</li><% } %>
+<% rows.forEach(n => { %><li class="list-group-item <%= n.is_read ? '' : 'list-group-item-info' %>"><i class="bi bi-bell me-2"></i><%= n.message %><small class="text-muted d-block"><%= fmtDateTime(n.created_at) %></small></li><% }) %></ul>
+<%- include('partials/footer') %>

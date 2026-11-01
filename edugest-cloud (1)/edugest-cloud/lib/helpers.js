@@ -1,0 +1,15 @@
+const ANNEE = process.env.ANNEE_SCOLAIRE || '2026-2027';
+const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
+const clean = (v) => String(v ?? '').trim();
+const isInt = (v) => /^\d+$/.test(String(v ?? ''));
+const isDate = (v) => /^\d{4}-\d{2}-\d{2}$/.test(v) && !isNaN(Date.parse(v));
+const isAnnee = (v) => /^\d{4}-\d{4}$/.test(v) && Number(v.slice(5)) === Number(v.slice(0, 4)) + 1;
+const toNum = (v) => Number(String(v ?? '').replace(',', '.').trim());
+const money = (n) => Number(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' TND';
+const fmtDate = (d) => { if (!d) return ''; const s = typeof d === 'string' ? d : d.toISOString(); const [y, m, j] = s.slice(0, 10).split('-'); return `${j}/${m}/${y}`; };
+const fmtDateTime = (d) => d ? new Date(d).toLocaleString('fr-FR', { timeZone: 'Africa/Tunis', dateStyle: 'short', timeStyle: 'short' }) : '';
+const ROLES = { admin: 'Administrateur', enseignant: 'Enseignant', parent: 'Parent', comptable: 'Comptable / Secrétariat' };
+const MODES = { especes: 'Espèces', cheque: 'Chèque', virement: 'Virement', carte: 'Carte bancaire' };
+const NIVEAUX = ['1ère année', '2ème année', '3ème année', '4ème année', '5ème année', '6ème année'];
+const round2 = (n) => Math.round(n * 100) / 100;
+module.exports = { ANNEE, wrap, clean, isInt, isDate, isAnnee, toNum, money, fmtDate, fmtDateTime, ROLES, MODES, NIVEAUX, round2 };

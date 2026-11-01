@@ -1,0 +1,13 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-3">Enregistrer un paiement</h1>
+<%- include('partials/errors') %>
+<form method="post" action="/payments" class="card card-body"><input type="hidden" name="_csrf" value="<%= csrf %>"><div class="row g-3">
+  <div class="col-md-12"><label class="form-label" for="student_id">Élève *</label><select class="form-select" id="student_id" name="student_id" required><option value="">— Choisir —</option>
+    <% students.forEach(s => { %><option value="<%= s.id %>" <%= String(s.id) === String(v.student_id) ? 'selected' : '' %>><%= s.nom %> <%= s.prenom %> — <%= s.classe %> (reste à payer : <%= money(s.solde) %>)</option><% }) %></select></div>
+  <div class="col-md-4"><label class="form-label" for="montant">Montant (TND) *</label><input class="form-control" id="montant" name="montant" type="number" min="0.01" step="0.01" required value="<%= v.montant || '' %>"></div>
+  <div class="col-md-4"><label class="form-label" for="mode">Mode *</label><select class="form-select" id="mode" name="mode"><% Object.entries(MODES).forEach(([k, l]) => { %><option value="<%= k %>" <%= v.mode === k ? 'selected' : '' %>><%= l %></option><% }) %></select></div>
+  <div class="col-md-4"><label class="form-label" for="date_paiement">Date *</label><input class="form-control" id="date_paiement" name="date_paiement" type="date" required value="<%= v.date_paiement %>"></div>
+  <div class="col-md-8"><label class="form-label" for="motif">Motif</label><input class="form-control" id="motif" name="motif" maxlength="150" placeholder="Frais de scolarité - 2ème tranche" value="<%= v.motif || '' %>"></div>
+  <div class="col-md-4"><label class="form-label" for="statut">Statut *</label><select class="form-select" id="statut" name="statut"><option value="paye" <%= v.statut === 'paye' ? 'selected' : '' %>>Payé (notifie le parent)</option><option value="en_attente" <%= v.statut === 'en_attente' ? 'selected' : '' %>>En attente</option></select></div>
+</div><div class="mt-4"><button class="btn btn-primary"><i class="bi bi-check-lg"></i> Enregistrer le paiement</button> <a class="btn btn-outline-secondary" href="/payments">Annuler</a></div></form>
+<%- include('partials/footer') %>

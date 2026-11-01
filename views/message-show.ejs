@@ -1,0 +1,9 @@
+<%- include('partials/header') %>
+<div class="card"><div class="card-header"><strong><%= m.objet %></strong></div><div class="card-body">
+<div class="text-muted small mb-3">De <strong><%= m.expediteur %></strong> à <strong><%= m.destinataire %></strong> · <%= fmtDateTime(m.created_at) %><%= m.edited_at ? ' · modifié le ' + fmtDateTime(m.edited_at) : '' %></div>
+<p style="white-space:pre-line"><%= m.contenu %></p></div>
+<div class="card-footer d-flex flex-wrap gap-2"><a class="btn btn-outline-secondary" href="/messages">Retour</a>
+<% if (m.sender_id !== user.id) { %><a class="btn btn-primary" href="/messages/new?to=<%= m.sender_id %>&objet=<%= encodeURIComponent('Re: ' + m.objet.replace(/^Re: /, '')) %>"><i class="bi bi-reply"></i> Répondre</a><% } %>
+<% if (m.sender_id === user.id) { %><a class="btn btn-outline-primary" href="/messages/<%= m.id %>/edit"><i class="bi bi-pencil"></i> Modifier</a><% } %>
+<form method="post" action="/messages/<%= m.id %>/delete" data-confirm="Supprimer ce message ?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-outline-danger"><i class="bi bi-trash"></i> Supprimer</button></form></div></div>
+<%- include('partials/footer') %>

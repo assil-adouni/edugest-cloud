@@ -1,0 +1,12 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-3">Annonces</h1>
+<% if (user.role === 'admin') { %><%- include('partials/errors') %>
+<form method="post" action="/announcements" class="card card-body mb-4"><input type="hidden" name="_csrf" value="<%= csrf %>"><div class="fw-semibold mb-2">Publier une annonce générale</div>
+  <input class="form-control mb-2" name="titre" placeholder="Titre" maxlength="150" required value="<%= v.titre || '' %>">
+  <textarea class="form-control mb-2" name="contenu" rows="3" placeholder="Contenu de l'annonce" maxlength="3000" required><%= v.contenu || '' %></textarea>
+  <div><button class="btn btn-primary"><i class="bi bi-megaphone"></i> Publier</button></div></form><% } %>
+<% if (!rows.length) { %><div class="card card-body text-muted text-center">Aucune annonce.</div><% } %>
+<% rows.forEach(a => { %><div class="card mb-3"><div class="card-body"><div class="d-flex justify-content-between"><h2 class="h6"><%= a.titre %></h2><small class="text-muted"><%= fmtDateTime(a.created_at) %></small></div>
+<p class="mb-1" style="white-space:pre-line"><%= a.contenu %></p><small class="text-muted">Par <%= a.auteur || 'Administration' %></small>
+<% if (user.role === 'admin') { %><form method="post" action="/announcements/<%= a.id %>/delete" class="float-end" data-confirm="Supprimer cette annonce ?"><input type="hidden" name="_csrf" value="<%= csrf %>"><button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button></form><% } %></div></div><% }) %>
+<%- include('partials/footer') %>

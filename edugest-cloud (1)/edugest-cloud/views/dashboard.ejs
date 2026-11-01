@@ -1,0 +1,45 @@
+<%- include('partials/header') %>
+<h1 class="h3 page-title mb-1">Bonjour <%= user.prenom %></h1>
+<p class="text-muted mb-4"><%= ROLES[user.role] %> · Année scolaire <%= ANNEE %></p>
+<% const card = (icon, label, value, cls) => { %><div class="col-6 col-xl"><div class="stat-card <%= cls || '' %>"><i class="bi bi-<%= icon %>"></i><div><div class="stat-value"><%= value %></div><div class="stat-label"><%= label %></div></div></div></div><% }; %>
+<% if (d.stats) { %><div class="row g-3 mb-4">
+  <% if (user.role === 'admin') { card('people', 'Élèves', d.stats.eleves); card('building', 'Classes', d.stats.classes); card('person-workspace', 'Enseignants', d.stats.enseignants); } %>
+  <% card('cash-coin', 'Paiements enregistrés', money(d.stats.total_paye), 'ok'); card('hourglass-split', 'En attente (' + d.stats.nb_attente + ')', money(d.stats.total_attente), 'warn'); %>
+  <% if (user.role === 'comptable') card('wallet2', 'Solde restant à payer', money(d.solde), 'warn'); %>
+</div><% } %>
+
+<div class="row g-3">
+<div class="col-lg-7">
+  <% if (user.role === 'admin') { %><div class="card mb-3"><div class="card-header">Dernières activités</div><ul class="list-group list-group-flush">
+    <% if (!d.activities.length) { %><li class="list-group-item text-muted">Aucune activité.</li><% } %>
+    <% d.activities.forEach(a => { %><li class="list-group-item d-flex justify-content-between gap-2"><span><span class="badge bg-primary-subtle text-primary-emphasis me-2"><%= a.type %></span><%= a.texte %></span><small class="text-muted text-nowrap"><%= fmtDateTime(a.date) %></small></li><% }) %>
+  </ul></div><% } %>
+
+  <% if (user.role === 'enseignant') { %><div class="card mb-3"><div class="card-header">Mes classes</div><ul class="list-group list-group-flush">
+    <% if (!d.classes.length) { %><li class="list-group-item text-muted">Aucune classe ne vous est affectée.</li><% } %>
+    <% d.classes.forEach(c => { %><li class="list-group-item d-flex justify-content-between"><span><%= c.nom %> — <%= c.nb %> élève(s)</span><a href="/grades?class_id=<%= c.id %>" class="btn btn-sm btn-outline-primary">Saisir des notes</a></li><% }) %></ul></div><% } %>
+
+  <% if (user.role === 'parent') { %><div class="card mb-3"><div class="card-header">Mes enfants</div><ul class="list-group list-group-flush">
+    <% if (!d.kids.length) { %><li class="list-group-item text-muted">Aucun enfant rattaché à votre compte.</li><% } %>
+    <% d.kids.forEach(k => { %><li class="list-group-item"><strong><%= k.prenom %> <%= k.nom %></strong> — <%= k.classe %><br>
+      <span class="me-3">Moyenne générale : <strong><%= k.generale === null ? '—' : k.generale + ' / 20' %></strong></span>
+      <span>Solde restant : <strong><%= money(k.solde) %></strong></span>
+      <a class="float-end btn btn-sm btn-outline-primary" href="/children">Détails</a></li><% }) %></ul></div>
+  <div class="card mb-3"><div class="card-header">Dernières notifications</div><ul class="list-group list-group-flush">
+    <% if (!d.notifications.length) { %><li class="list-group-item text-muted">Aucune notification.</li><% } %>
+    <% d.notifications.forEach(n => { %><li class="list-group-item"><%= n.message %> <small class="text-muted d-block"><%= fmtDateTime(n.created_at) %></small></li><% }) %></ul></div><% } %>
+
+  <% if (user.role === 'comptable') { %><div class="card mb-3"><div class="card-header">Derniers paiements</div><ul class="list-group list-group-flush">
+    <% d.payments.forEach(p => { %><li class="list-group-item d-flex justify-content-between"><span><%= p.prenom %> <%= p.nom %> — <%= money(p.montant) %></span><span class="badge <%= p.statut === 'paye' ? 'bg-success' : 'bg-warning text-dark' %>"><%= p.statut === 'paye' ? 'Payé' : 'En attente' %></span></li><% }) %></ul>
+    <div class="card-footer"><a href="/payments/new" class="btn btn-primary btn-sm"><i class="bi bi-plus-lg"></i> Enregistrer un paiement</a></div></div><% } %>
+
+  <% if (d.homework) { %><div class="card mb-3"><div class="card-header">Devoirs à venir</div><ul class="list-group list-group-flush">
+    <% if (!d.homework.length) { %><li class="list-group-item text-muted">Aucun devoir à venir.</li><% } %>
+    <% d.homework.forEach(h => { %><li class="list-group-item"><strong><%= h.titre %></strong> <span class="text-muted">(<%= h.matiere %>, <%= h.classe %>)</span><br><small>À rendre le <%= fmtDate(h.date_limite) %></small></li><% }) %></ul></div><% } %>
+</div>
+<div class="col-lg-5"><div class="card"><div class="card-header"><i class="bi bi-megaphone"></i> Annonces</div><ul class="list-group list-group-flush">
+  <% if (!d.announcements.length) { %><li class="list-group-item text-muted">Aucune annonce.</li><% } %>
+  <% d.announcements.forEach(a => { %><li class="list-group-item"><strong><%= a.titre %></strong><p class="mb-1 small"><%= a.contenu %></p><small class="text-muted"><%= fmtDateTime(a.created_at) %> · <%= a.auteur || 'Administration' %></small></li><% }) %></ul>
+  <% if (user.role === 'admin') { %><div class="card-footer"><a href="/announcements" class="btn btn-sm btn-primary">Publier une annonce</a></div><% } %></div></div>
+</div>
+<%- include('partials/footer') %>
